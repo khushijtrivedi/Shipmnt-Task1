@@ -7,46 +7,45 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <title>Review Uploaded Data</title>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var data_json = '{{ data_json|safe }}';
-            var data = JSON.parse(data_json);
-            var columns = data.columns;
-            var rows = data.data;
+        function renderTable(data) {
+            let parsedData = JSON.parse(data);
+            let columns = parsedData.columns;
+            let rows = parsedData.data;
 
-            var table = document.getElementById("data-table");
-            var thead = table.getElementsByTagName("thead")[0];
-            var tbody = table.getElementsByTagName("tbody")[0];
+            let table = '<table class="table table-bordered"><thead><tr>';
 
-            var headerRow = document.createElement("tr");
-            columns.forEach(function (col) {
-                var th = document.createElement("th");
-                th.textContent = col;
-                headerRow.appendChild(th);
+            // Add table headers
+            columns.forEach(column => {
+                table += `<th>${column}</th>`;
             });
-            thead.appendChild(headerRow);
+            table += '</tr></thead><tbody>';
 
-            rows.forEach(function (row) {
-                var tr = document.createElement("tr");
-                row.forEach(function (cell) {
-                    var td = document.createElement("td");
-                    td.textContent = cell;
-                    tr.appendChild(td);
+            // Add table rows
+            rows.forEach(row => {
+                table += '<tr>';
+                row.forEach(cell => {
+                    table += `<td>${cell}</td>`;
                 });
-                tbody.appendChild(tr);
+                table += '</tr>';
             });
-        });
+
+            table += '</tbody></table>';
+            document.getElementById('table-container').innerHTML = table;
+        }
+
+        window.onload = function () {
+            let data = document.getElementById('data-json').value;
+            renderTable(data);
+        }
     </script>
 </head>
 
 <body>
     <div class="container mt-5">
         <h2>Review Uploaded Data</h2>
-        <table class="table table-bordered" id="data-table">
-            <thead></thead>
-            <tbody></tbody>
-        </table>
+        <div id="table-container"></div>
         <form action="/confirm" method="post">
-            <input type="hidden" name="data" value="{{ data_json }}">
+            <input type="hidden" id="data-json" name="data" value="{{ data_json }}">
             <button type="submit" class="btn btn-success">Confirm and Save</button>
             <a href="/" class="btn btn-secondary">Cancel</a>
         </form>
