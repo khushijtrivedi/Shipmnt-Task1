@@ -2,15 +2,15 @@
 
 When deploying the application, you might encounter issues with local database connections. Below are screenshots demonstrating the local setup and how it looks when it's functioning properly.
 
-### Local Database Connection
-
-![Local Database Setup](static/data_uploaded.png)
-
 ### How It Works Locally
 
 The following screenshot shows how the database setup appears when running the application locally:
 
 ![Application in Local Environment](static/data_uploaded.png)
+
+The following screenshot shows the database entry in mysql workbench:
+
+![Application in Local Environment](static/database.png)
 
 The following screenshot shows how upload web page looks like:
 
