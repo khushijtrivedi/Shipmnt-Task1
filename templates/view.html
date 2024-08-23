@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Review Data</title>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h2>Review Uploaded Data</h2>
+        {% if errors %}
+        <div class="alert alert-danger">
+            <ul>
+                {% for error in errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        <form action="/confirm" method="post">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Author Name</th>
+                        <th>Author Email</th>
+                        <th>Author Date of Birth</th>
+                        <th>Book Name</th>
+                        <th>ISBN Code</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data %}
+                    <tr>
+                        <td><input type="hidden" name="author_name" value="{{ row['Author Name'] }}">{{ row['Author
+                            Name'] }}</td>
+                        <td><input type="hidden" name="author_email" value="{{ row['Author Email'] }}">{{ row['Author
+                            Email'] }}</td>
+                        <td><input type="hidden" name="author_dob" value="{{ row['Author Date of Birth'] }}">{{
+                            row['Author Date of Birth'] }}</td>
+                        <td><input type="hidden" name="book_name" value="{{ row['Book Name'] }}">{{ row['Book Name'] }}
+                        </td>
+                        <td><input type="hidden" name="isbn_code" value="{{ row['ISBN Code'] }}">{{ row['ISBN Code'] }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button type="submit" class="btn btn-success">Confirm and Save</button>
+            <a href="/" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Upload Excel File</title>
+    <script>
+        function validateFile() {
+            var fileInput = document.getElementById('file');
+            var errorDiv = document.getElementById('error-message');
+            var filePath = fileInput.value;
+            var allowedExtensions = /(\.xls|\.xlsx)$/i;  // Regex to match .xls and .xlsx file extensions
+
+            // Clear previous error message
+            errorDiv.textContent = '';
+
+            if (!allowedExtensions.exec(filePath)) {  // Check if the file extension is allowed
+                // Update error message on the page
+                errorDiv.textContent = 'Invalid file type. Please upload an Excel file (.xls or .xlsx).';
+                errorDiv.className = 'alert alert-danger';  // Add Bootstrap classes for styling
+                fileInput.value = '';  // Clear the file input to prevent submission
+                return false;  // Prevent form submission
+            }
+
+            return true;  // Allow form submission if validation passes
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h2>Upload Excel File</h2>
+
+        <!-- Display flash messages from Flask -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-danger">
+            {{ messages[0] }}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <!-- Error message container -->
+        <div id="error-message"></div>
+
+        <!-- Form to upload Excel file -->
+        <form action="/upload" method="post" enctype="multipart/form-data" onsubmit="return validateFile()">
+            <div class="form-group">
+                <label for="file">Choose Excel File (.xls or .xlsx):</label>
+                <input type="file" class="form-control-file" id="file" name="file" accept=".xls,.xlsx" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Upload</button>
+        </form>
+    </div>
+</body>
+
+</html>
