@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 import mysql.connector
 import pandas as pd
 from datetime import datetime
+import json
 
 app = Flask(__name__)
 app.secret_key = "your_secret_key"
@@ -25,13 +26,14 @@ def index():
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
-    file = request.files.get('file')  # Use .get() to avoid KeyError
+    file = request.files.get('file')
     if file and (file.filename.endswith('.xls') or file.filename.endswith('.xlsx')):
         try:
             data = pd.read_excel(file)
             data.fillna("", inplace=True)  # Handle missing values
-            return render_template('view.html', tables=[data.to_html(classes='data', header=True, index=False)], 
-                                   columns=data.columns.tolist(), rows=data.values.tolist())
+            # Convert DataFrame to JSON
+            data_json = data.to_json(orient='split')
+            return render_template('view.html', data_json=data_json)
         except Exception as e:
             flash(f"An error occurred while processing the file: {e}")
             return redirect(url_for('index'))
@@ -41,11 +43,10 @@ def upload_file():
 
 @app.route('/confirm', methods=['POST'])
 def confirm_data():
-    # Assuming the file is included in the form data here, but this can be different.
-    file = request.files.get('file')
-    if file:
+    data_json = request.form.get('data')
+    if data_json:
         try:
-            data = pd.read_excel(file)
+            data = pd.read_json(data_json, orient='split')
             cursor = mysql.cursor()
             for index, row in data.iterrows():
                 try:
@@ -69,7 +70,7 @@ def confirm_data():
             flash(f"An error occurred while reading the file: {e}")
             return redirect(url_for('index'))
     else:
-        flash("No file was uploaded.")
+        flash("No data was uploaded.")
     
     return redirect(url_for('index'))
 
